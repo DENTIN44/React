@@ -1,5 +1,7 @@
 import React, { useState, Component } from 'react';
 
+// its bs now
+
 /**
  * Functional component
  * @returns {JSX.Element}
