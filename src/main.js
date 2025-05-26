@@ -1,7 +1,7 @@
 // index.js (or your entry file)
 import React from 'react';
 import { createRoot } from 'react-dom/client'; // React 18+ import
-import App from './App'; // Import the App component
+import App from './App.js'; // Import the App component
 
 // Create a root and mount the App component
 const rootElement = document.getElementById('root'); // Ensure this matches your HTML
