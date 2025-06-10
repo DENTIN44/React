@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'; // For React 18+
 import App from './App'; // Adjust path if App.js is elsewhere
 import './index.css';
 // import {/*FriendsManager*/ ListTwo} from './components/MyList';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 // import FormikForm from './components/FormikForm';
 // import { BasicRefExample, InputFocusWithRef, RefWithForwardedComponent, CallbackRefExample, CustomTextInput,   UseRefExample} from './components/Refs';  // Correct for named exports
 // import { AppEventFunction, AppEventClass } from './components/Events';

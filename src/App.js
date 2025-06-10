@@ -7,6 +7,7 @@
 // import HelloReact from './components/HelloReact';   
 // import NewApp from './NewApp.jsx';                 
 import './App.css';                                // Import CSS for styling
+import './css/style.css';                                // Import CSS for styling
 // import { DemoForm, DemoFormTwo, DemoFormThree, DemoFormFour, DemoFormFive, DemoFormSix } from './components/ControlledComponent';
 
 
@@ -116,48 +117,83 @@ import './App.css';                                // Import CSS for styling
 //     );
 //   }
 // }
-import React, { Component } from 'react';
+import React from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
+const duration = 500;
 
 class App extends React.Component {
-          constructor(props) {
+  constructor(props) {
     super(props);
-    this.state = {items: ['Blockchain', 'ReactJS', 'TypeScript', 'JavaTpoint']};
-    this.handleAdd = this.handleAdd.bind(this);
+    this.state = { items: ['Blockchain', 'ReactJS', 'TypeScript', 'JavaTpoint'] };
+    this.nodeRefs = this.state.items.map(() => React.createRef());
   }
 
-  handleAdd() {
-    const newItems = this.state.items.concat([
-      prompt('Enter Item Name')
-    ]);
-    this.setState({items: newItems});
-  }
+  handleAdd = () => {
+    const newItem = prompt('Enter Item Name');
+    if (newItem) {
+      this.setState(state => {
+        this.nodeRefs.push(React.createRef());
+        return { items: [...state.items, newItem] };
+      });
+    }
+  };
 
-  handleRemove(i) {
-    let newItems = this.state.items.slice();
-    newItems.splice(i, 1);
-    this.setState({items: newItems});
-  }
+  handleRemove = i => {
+    this.setState(state => {
+      this.nodeRefs.splice(i, 1);
+      const newItems = state.items.slice();
+      newItems.splice(i, 1);
+      return { items: newItems };
+    });
+  };
 
   render() {
-    const items = this.state.items.map((item, i) => (
-      <CSSTransition key={i} timeout={800} classNames="example">
-        <div>{item}</div>
-      </CSSTransition>
-    ));
-
     return (
-      <div>
-        <h2>Animation Example</h2>
-        <button onClick={this.addItem}>Insert Item</button>
-        <TransitionGroup>
-          {items}
+      <div className="container my-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1 className="h3">Animated Item List</h1>
+          <button className="btn btn-primary" onClick={this.handleAdd}>
+            + Add New Item
+          </button>
+        </div>
+
+        <TransitionGroup className="list-group">
+          {this.state.items.map((item, i) => (
+            <CSSTransition
+              key={`${item}-${i}`}  // Better unique key
+              timeout={duration}
+              nodeRef={this.nodeRefs[i]}
+              classNames="example"
+            >
+              {(state) => (
+                <div
+                  ref={this.nodeRefs[i]}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                  style={{
+                    transitionDelay: state === 'entering' ? `${i * 100}ms` : '0ms',
+                  }}
+                >
+                  {item}
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => this.handleRemove(i)}
+                    aria-label={`Remove ${item}`}
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
+            </CSSTransition>
+          ))}
         </TransitionGroup>
       </div>
     );
   }
 }
 
-// Export the App class component to be used in other parts of the application
 export default App;
+
+
+
