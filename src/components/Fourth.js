@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo,  useState  } from 'react';
 import { useTable, useFilters, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 
 // ======================================================
@@ -11,8 +11,11 @@ const Table = ({
   showPagination = true,
   showGlobalFilter = true,
   showColumnFilters = true,
-  showRowSelection = true
+  showRowSelection = true, // ✅ Add comma here
+  onEdit,
+  onDelete
 }) => {
+
   // ======================================================
   // 🛠️ Table Configuration
   // ======================================================
@@ -236,8 +239,10 @@ const Table = ({
 // 🦸‍♂️ SUPERHEROES COMPONENT - EXAMPLE USAGE
 // ======================================================
 const SuperHeroes = () => {
+
+  
   // Sample data
-  const superheroes = [
+    const initialSuperheroes = [
     { id: 1, name: 'Spider-Man', realName: 'Peter Parker', age: 23, power: 'Wall-crawling', status: 'Active', team: 'Avengers' },
     { id: 2, name: 'Iron Man', realName: 'Tony Stark', age: 48, power: 'Powered armor suit', status: 'Deceased', team: 'Avengers' },
     { id: 3, name: 'Captain America', realName: 'Steve Rogers', age: 105, power: 'Super soldier', status: 'Retired', team: 'Avengers' },
@@ -249,10 +254,36 @@ const SuperHeroes = () => {
     { id: 9, name: 'Storm', realName: 'Ororo Munroe', age: 40, power: 'Weather manipulation', status: 'Active', team: 'X-Men' },
     { id: 10, name: 'Black Panther', realName: "T'Challa", age: 42, power: 'Enhanced abilities', status: 'Active', team: 'Avengers' },
   ];
+  
+// Use state with initial data
+  const [data, setData] = useState(initialSuperheroes);  
+  
+  const [editingHero, setEditingHero] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Event handlers
-  const handleEdit = (hero) => console.log('Edit hero:', hero);
-  const handleDelete = (hero) => console.log('Delete hero:', hero);
+  // Open edit modal
+  const openEditModal = (hero) => {
+    setEditingHero(hero);
+    setIsEditModalOpen(true);
+  };
+
+  // Close edit modal
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingHero(null);
+  };
+
+  // Handle saving edits
+  const handleSaveEdit = () => {
+    if (editingHero) {
+      handleEdit(editingHero);
+      closeEditModal();
+    }
+  };
+
+  // Event handlers remain the same
+  const handleDelete = heroToDelete => setData(old => old.filter(h => h.id !== heroToDelete.id));
+  const handleEdit = updatedHero => setData(old => old.map(h => (h.id === updatedHero.id ? updatedHero : h)));
 
   // Column definitions
   const columns = [
@@ -278,7 +309,7 @@ const SuperHeroes = () => {
         <div className="actions">
           <button
             className="btn edit-btn"
-            onClick={() => handleEdit(row.original)}
+            onClick={() => openEditModal(row.original)}
           >
             Edit
           </button>
@@ -298,13 +329,82 @@ const SuperHeroes = () => {
       <h1>Marvel Superhero Database</h1>
       <div className="app-container">
         <Table 
-          data={superheroes} 
+          data={data}  
           columns={columns}
+          // onEdit={handleEdit}
+          // onDelete={handleDelete}
           pageSize={5}
           showGlobalFilter={true}
           showColumnFilters={true}
           showRowSelection={true}
         />
+        {/* Edit Modal */}
+        {isEditModalOpen && editingHero && (
+          <div className="modal-overlay">
+            <div className="edit-modal">
+              <h3>Edit Superhero</h3>
+              <div className="form-group">
+                <label>Hero Name:</label>
+                <input 
+                  type="text" 
+                  value={editingHero.name} 
+                  onChange={e => setEditingHero({...editingHero, name: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Real Name:</label>
+                <input 
+                  type="text" 
+                  value={editingHero.realName} 
+                  onChange={e => setEditingHero({...editingHero, realName: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Age:</label>
+                <input 
+                  type="number" 
+                  value={editingHero.age} 
+                  onChange={e => setEditingHero({...editingHero, age: parseInt(e.target.value) || 0})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Superpower:</label>
+                <input 
+                  type="text" 
+                  value={editingHero.power} 
+                  onChange={e => setEditingHero({...editingHero, power: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Status:</label>
+                <select 
+                  value={editingHero.status} 
+                  onChange={e => setEditingHero({...editingHero, status: e.target.value})}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Deceased">Deceased</option>
+                  <option value="Retired">Retired</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Team:</label>
+                <input 
+                  type="text" 
+                  value={editingHero.team} 
+                  onChange={e => setEditingHero({...editingHero, team: e.target.value})}
+                />
+              </div>
+              <div className="modal-actions">
+                <button className="btn cancel-btn" onClick={closeEditModal}>
+                  Cancel
+                </button>
+                <button className="btn save-btn" onClick={handleSaveEdit}>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
