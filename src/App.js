@@ -3,10 +3,11 @@
 // import First from './components/First';
 // import Second from './components/Second';           
 // import Third from './components/Third';            
-// import Fourth from './components/Fourth';         
+import SuperHeroes from './components/Fourth';         
 // import HelloReact from './components/HelloReact';   
 // import NewApp from './NewApp.jsx';                 
 import './App.css';                                // Import CSS for styling
+import './css/Table.css';                                
 import './css/style.css';                                // Import CSS for styling
 // import { DemoForm, DemoFormTwo, DemoFormThree, DemoFormFour, DemoFormFive, DemoFormSix } from './components/ControlledComponent';
 
@@ -188,6 +189,8 @@ class App extends React.Component {
             </CSSTransition>
           ))}
         </TransitionGroup>
+        <br></br><br></br>
+        <SuperHeroes />
       </div>
     );
   }
